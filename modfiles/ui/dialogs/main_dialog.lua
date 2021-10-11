@@ -17,11 +17,17 @@ main_dialog = {}
 -- the game automtically closes the currently open GUI before calling this one. This means the top layer
 -- that's open at that stage is closed already when we get here. So we're at most at the modal dialog
 -- layer at this point and need to close the things below, if there are any.
-local function handle_other_gui_opening(player)
+local function handle_other_gui_opening(player, event)
+    if event.element and event.element.get_mod() == script.mod_name then return end
+
     local ui_state = data_util.get("ui_state", player)
 
     -- With that in mind, if there's a modal dialog open, we were in selection mode, and need to close the dialog
-    if ui_state.modal_dialog_type ~= nil then modal_dialog.exit(player, "cancel", true) end
+    if ui_state.modal_dialog_type == "redesign" then
+        -- todo
+    elseif ui_state.modal_dialog_type ~= nil then
+        modal_dialog.exit(player, "cancel", true)
+    end
 
     -- Then, at this point we're at most at the stage where the main dialog is open, so close it
     if main_dialog.is_in_focus(player) then main_dialog.toggle(player, true) end

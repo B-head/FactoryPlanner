@@ -5,6 +5,8 @@ ui_util = {
     switch = {}
 }
 
+local gui = require("__flib__.gui")
+
 -- ** GUI **
 -- Properly centers the given frame (need width/height parameters cause no API-read exists)
 function ui_util.properly_center_frame(player, frame, dimensions)
@@ -210,3 +212,192 @@ end
 function ui_util.switch.convert_to_state(boolean)
     return boolean and "left" or "right"
 end
+
+-- I want to use coroutine.
+function ui_util.visit_gui_elements(context)
+    local element_stack = {context}
+    local index_stack = {1}
+    function it()
+        local top = #element_stack
+        if top == 0 then
+            return nil
+        end
+
+        local current = element_stack[top]
+        local children = current.children
+        local index = index_stack[top]
+        index_stack[top] = index + 1
+
+        if #children >= index then
+            local n = children[index]
+            if n.name == "" then
+                table.insert(element_stack, n)
+                table.insert(index_stack, 1)
+            end
+            return n.index, n
+        else
+            table.remove(element_stack)
+            table.remove(index_stack)
+            return it()
+        end
+    end
+    return it
+end
+
+function ui_util.get_gui_element(context, find_name, ...)
+    if not find_name then
+        return context
+    end
+
+    for _, e in ui_util.visit_gui_elements(context) do
+        if e.name == find_name then
+            return ui_util.get_gui_element(e, ...)
+        end
+    end
+    assert(false, string.format("Can't find an element named %q.", find_name))
+end
+
+function ui_util.get_super_gui_element(context, find_name)
+    local e = context
+    while e do
+        if e.name == find_name then
+            return e
+        end
+        e = e.parent
+    end
+    assert(false, string.format("Can't find an element named %q.", find_name))
+end
+
+-- function ui_util.create_gui_placeholder(key)
+--     local meta = {__placeholder = key}
+--     local ret = {}
+--     setmetatable(ret, meta)
+--     return ret
+-- end
+
+-- local function preprocess_gui_placeholder(defines)
+--     local ret = {}
+--     for k, v in pairs(defines) do
+--         if type(k) == "string" then
+--             local meta = getmetatable(v)
+--             if meta and meta.__placeholder then
+--                 ret[k] = meta.__placeholder
+--                 defines[k] = nil
+--             elseif type(v) == "table" then
+--                 ret[k] = preprocess_gui_placeholder(v)
+--             end
+--         end
+--     end
+--     return (table_size(ret) > 0) and ret or nil
+-- end
+
+ui_util.gui_handlers = {}
+
+function ui_util.register_handler(event_name, handler_id, handler)
+    assert(handler_id, "To register, either handler_id or name is required.")
+    assert(type(handler) == "function", string.format("%s handler for id %q is not function.", event_name, handler_id))
+
+    local actual_handlers_id = event_name.."@"..handler_id
+    assert(not ui_util.gui_handlers[handler_id], string.format("Id %q has already been registered with %s handler.", handler_id, event_name))
+    ui_util.gui_handlers[actual_handlers_id] = handler
+    return actual_handlers_id
+end
+
+function ui_util.preprocess_gui_defines(handlers_id_prefix, defines)
+    assert(game == nil, "preprocess_defines() needs to be called during initialization stage.")
+
+    if type(handlers_id_prefix) == "table" then
+        defines = handlers_id_prefix
+        handlers_id_prefix = nil
+    end
+
+    -- local placeholder_map = preprocess_gui_placeholder(defines)
+    -- local tags = defines.tags or {}
+    -- tags.__placeholder_map = placeholder_map
+    -- defines.tags = tags
+
+    local handlers_id = defines.handlers_id or defines.name
+    if handlers_id_prefix then
+        if handlers_id then
+            handlers_id = handlers_id_prefix.."::"..handlers_id
+        else            
+            handlers_id = handlers_id_prefix
+        end
+    end
+
+    local actions = defines.actions or {}
+    for event_name, handler in pairs(actions) do
+        actions[event_name] = ui_util.register_handler(event_name, handlers_id, handler)
+    end
+
+    for _, v in ipairs(defines) do
+        ui_util.preprocess_gui_defines(handlers_id, v)
+    end
+
+    return defines
+end
+
+-- function ui_util.inject_value_into_gui_placeholder(preprocessd_defines, inject_map)
+--     local function impl(current, placeholder_map)
+--         placeholder_map = (current.tags or {}).__placeholder_map or placeholder_map or {}
+--         for k, v in pairs(placeholder_map) do
+--             if type(v) == "table" then
+--                 impl(current[k], v)
+--             elseif type(v) == "string" then
+--                 current[k] = inject_map[v] or current[k]
+--             else
+--                 assert()
+--             end
+--         end
+--     end
+
+--     local ret = table.deep_copy(preprocessd_defines)
+--     impl(ret)
+--     return ret
+-- end
+
+function ui_util.dispatch_gui_event(event)
+    local element = event.element or (ui_util.get_player(event.player_index) or {}).opened
+    event.element = element
+    if not element then return false end
+
+    local event_name = event.input_name or event.name
+    local handler_id = gui.read_action(event) or gui.get_action(element, event_name)
+    if not handler_id then return false end
+
+    local handler = ui_util.gui_handlers[handler_id]
+    if not handler then return false end
+
+    handler(event)
+    return true
+end
+
+function ui_util.recursive_dispatch_gui_event(event)
+    local element = event.element or (ui_util.get_player(event.player_index) or {}).opened
+    assert(element)
+
+    event.element = element
+    ui_util.dispatch_gui_event(event)
+    for _, next_element in ipairs(element.children) do
+        event.element = next_element
+        ui_util.recursive_dispatch_gui_event(event)
+    end
+end
+
+function ui_util.reverse_recursive_dispatch_gui_event(event)
+    local element = event.element or (ui_util.get_player(event.player_index) or {}).opened
+    assert(element)
+
+    for _, next_element in ipairs(element.children) do
+        event.element = next_element
+        ui_util.reverse_recursive_dispatch_gui_event(event)
+    end
+    event.element = element
+    ui_util.dispatch_gui_event(event)
+end
+
+function ui_util.get_player(player_index)
+    return (type(player_index) == "number") and game.players[player_index] or player_index
+end
+
+return ui_util

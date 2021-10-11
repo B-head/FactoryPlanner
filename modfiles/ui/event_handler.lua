@@ -149,10 +149,13 @@ end
 
 
 local function handle_gui_event(event)
+    -- Override with redesign code.
+    if ui_util.dispatch_gui_event(event) then return end
+
     if not event.element then return end
 
     -- Rai says this is very slow, but it isn't really if called it once per event
-    if event.element.tags.mod ~= "fp" then return end
+    if event.element.get_mod() ~= script.mod_name then return end
 
     -- The event table actually contains its identifier, not its name
     local event_name = gui_identifier_map[event.name]
@@ -244,6 +247,9 @@ end
 
 
 local function handle_misc_event(event)
+    -- Override with redesign code.
+    if ui_util.dispatch_gui_event(event) then return end
+
     local event_name = event.input_name or event.name -- also handles keyboard shortcuts
     local event_handlers = misc_event_cache[misc_identifier_map[event_name]]
     if not event_handlers then return end  -- make sure the given event is even handled

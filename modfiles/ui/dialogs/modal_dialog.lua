@@ -161,15 +161,7 @@ function modal_dialog.enter(player, dialog_settings)
         return
     end
 
-    ui_state.modal_dialog_type = dialog_settings.type
-    ui_state.modal_data.modal_elements = {}
-
-    -- Create interface_dimmer first so the layering works out correctly
-    local interface_dimmer = player.gui.screen.add{type="frame", style="fp_frame_semitransparent",
-      tags={mod="fp", on_gui_click="re-layer_interface_dimmer"}, visible=(not dialog_settings.skip_dimmer)}
-    interface_dimmer.style.size = ui_state.main_dialog_dimensions
-    interface_dimmer.location = ui_state.main_elements.main_frame.location
-    ui_state.modal_data.modal_elements.interface_dimmer = interface_dimmer
+    modal_dialog.create_interface_dimmer(player, dialog_settings.type, dialog_settings.skip_dimmer)
 
     -- Create modal dialog framework and let the dialog itself fill it out
     local frame_modal_dialog = create_base_modal_dialog(player, dialog_settings, ui_state.modal_data)
@@ -177,6 +169,19 @@ function modal_dialog.enter(player, dialog_settings)
     player.opened = frame_modal_dialog
 
     if dialog_settings.force_auto_center then frame_modal_dialog.force_auto_center() end
+end
+
+function modal_dialog.create_interface_dimmer(player, modal_dialog_type, is_skip_dimmer)
+    local ui_state = data_util.get("ui_state", player)
+    ui_state.modal_dialog_type = modal_dialog_type
+    ui_state.modal_data = ui_state.modal_data or {}
+
+    -- Create interface_dimmer first so the layering works out correctly
+    local interface_dimmer = player.gui.screen.add{type="frame", style="fp_frame_semitransparent",
+      tags={mod="fp", on_gui_click="re-layer_interface_dimmer"}, visible=(not is_skip_dimmer)}
+    interface_dimmer.style.size = ui_state.main_dialog_dimensions
+    interface_dimmer.location = ui_state.main_elements.main_frame.location
+    ui_state.modal_data.modal_elements = {interface_dimmer = interface_dimmer}
 end
 
 -- Handles the closing process of a modal dialog, reopening the main dialog thereafter
@@ -200,12 +205,15 @@ function modal_dialog.exit(player, button_action, skip_player_opened)
     local closing_function = _G[ui_state.modal_dialog_type .. "_dialog"].close
     if closing_function ~= nil then closing_function(player, button_action) end
 
-    ui_state.modal_dialog_type = nil
-    ui_state.modal_data = nil
-
-    modal_elements.interface_dimmer.destroy()
     modal_elements.modal_frame.destroy()
-    ui_state.modal_elements = nil
+    modal_dialog.reset_ui_state(player, skip_player_opened)
+end
+
+function modal_dialog.reset_ui_state(player, skip_player_opened)
+    local ui_state = data_util.get("ui_state", player)
+    ui_state.modal_data.modal_elements.interface_dimmer.destroy()
+    ui_state.modal_dialog_type = nil
+    ui_state.modal_data = nil    
 
     if not skip_player_opened then player.opened = ui_state.main_elements.main_frame end
     title_bar.refresh_message(player)
@@ -271,7 +279,9 @@ modal_dialog.gui_events = {
         {
             name = "re-layer_interface_dimmer",
             handler = (function(player, _, _)
-                data_util.get("modal_elements", player).modal_frame.bring_to_front()
+                if player.opened then
+                    player.opened.bring_to_front()
+                end
             end)
         },
         {
@@ -338,3 +348,5 @@ modal_dialog.misc_events = {
         end
     end)
 }
+
+return modal_dialog
