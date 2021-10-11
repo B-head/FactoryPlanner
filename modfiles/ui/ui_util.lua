@@ -1,5 +1,3 @@
-mod_gui = require("mod-gui")
-
 ui_util = {
     context = {},
     switch = {}
@@ -33,6 +31,8 @@ function ui_util.select_all(textfield)
     textfield.focus()
     textfield.select_all()
 end
+
+local mod_gui = require("mod-gui")
 
 -- Toggles the visibility of the toggle-main-dialog-button
 function ui_util.toggle_mod_gui(player)

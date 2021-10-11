@@ -165,6 +165,8 @@ function NTH_TICK_HANDLERS.adjust_interface_dimensions(metadata)
     live_settings["fp_subfactory_list_rows"] = {value = math.max(subfactory_list_rows, height_minimum)}
 end
 
+local mod_gui = require("mod-gui")
+
 -- Destroys all GUIs so they are loaded anew the next time they are shown
 local function reset_player_gui(player)
     local mod_gui_button = mod_gui.get_button_flow(player)["fp_button_toggle_interface"]
@@ -172,7 +174,7 @@ local function reset_player_gui(player)
 
     -- All mod frames
     for _, gui_element in pairs(player.gui.screen.children) do
-        if gui_element.valid and gui_element.get_mod() == "factoryplanner" then
+        if gui_element.valid and gui_element.get_mod() == script.mod_name then
             gui_element.destroy()
         end
     end
@@ -188,7 +190,7 @@ local function global_init()
     end
 
     -- Initiates all factorio-global variables
-    global.mod_version = game.active_mods["factoryplanner"]
+    global.mod_version = game.active_mods[script.mod_name]
     global.players = {}
 
     -- Save metadata about currently registered on_nth_tick events
