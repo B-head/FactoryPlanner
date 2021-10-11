@@ -272,4 +272,43 @@ function M.get_window_search_text(elemnet)
     return window.title_bar.search_field.text
 end
 
+function M.request_to_add_recipe_chain(player, item_proto, production_type, subfactory_id, floor_id, insert_index)
+    local chainable_recipes = data_util.get_chainable_recipes(player, item_proto, production_type)
+
+    -- Users may not even notice that filters are switched.
+    -- That would be confusing.
+    --
+    -- -- Set filters to try and show at least one recipe, should one exist, incorporating user preferences
+    -- -- (This logic is probably inefficient, but it's clear and way faster than the loop above anyways)
+    -- if relevant_recipes_count - counts.disabled - counts.hidden - counts.disabled_hidden > 0 then
+    --     show.filters.disabled = user_prefs.disabled or false
+    --     show.filters.hidden = user_prefs.hidden or false
+    -- elseif relevant_recipes_count - counts.hidden - counts.disabled_hidden > 0 then
+    --     show.filters.disabled = true
+    --     show.filters.hidden = user_prefs.hidden or false
+    -- else
+    --     show.filters.disabled = true
+    --     show.filters.hidden = true
+    -- end
+    local relevant_recipes = table.filter(chainable_recipes, function(v) return not v.ignored end)
+    if #relevant_recipes == 0 then
+        local error = (#chainable_recipes == 0) and {"fp.error_no_enabled_recipe"} or {"fp.error_no_relevant_recipe"}
+        title_bar.enqueue_message(player, error, "error", 1, false)
+    elseif #relevant_recipes == 1 then
+        local recipe_id = relevant_recipes[1].proto.id
+        data_util.attempt_adding_line(player, recipe_id, production_type, subfactory_id, floor_id, insert_index)
+    else -- 2+ relevant recipes
+        local preferences = data_util.get("preferences", player)
+        M.enter(player, GUI_DEFINES.recipe_dialog, {
+            chainable_recipes = chainable_recipes,
+            item_proto = item_proto,
+            production_type = production_type,
+            subfactory_id = subfactory_id,
+            floor_id = floor_id,
+            insert_index = insert_index,
+            filters = table.deep_copy(preferences.recipe_filters)
+        })
+    end
+end
+
 return M

@@ -280,3 +280,120 @@ function data_util.porter.format_modset_diff(old_modset)
     -- Return an empty string if no changes were found, ie. the tooltip is still only the header
     return (table_size(tooltip) == 2) and "" or tooltip
 end
+
+-- Serves the dual-purpose of determining the appropriate settings for the recipe picker filter.
+function data_util.get_chainable_recipes(player, product_proto, production_type)
+    local force_recipes = player.force.recipes
+    local preferences = data_util.get("preferences", player)
+
+    local map = RECIPE_MAPS[production_type][product_proto.type][product_proto.name]
+    if not map then -- this being nil means that the item has no recipes
+        return {}
+    end
+
+    local chainable_recipes = {}
+    for recipe_id, _ in pairs(map) do
+        local recipe = global.all_recipes.recipes[recipe_id]
+        local force_recipe = force_recipes[recipe.name]
+        
+        if recipe.custom then -- Add custom recipes by default
+            table.insert(chainable_recipes, {proto = recipe, disabled = false, hidden = false, ignored = false})
+            -- These are always enabled and non-hidden, so no need to tally them
+            -- They can also not be disabled by user preference
+        elseif force_recipe ~= nil then -- only add recipes that exist on the current force
+            local user_ignored = (preferences.ignore_barreling_recipes and recipe.barreling)
+                or (preferences.ignore_recycling_recipes and recipe.recycling)
+            local recipe_enabled, recipe_hidden = force_recipe.enabled, recipe.hidden
+            
+            -- bug: The recipe maybe enabled by scripts.
+            -- bug: Hidden recipes are not included in results.
+            --
+            -- -- If the recipe is not enabled, it has to be made sure that there is at
+            -- -- least one enabled technology that could potentially enable it
+            -- local force_technologies = player.force.technologies
+            -- local recipe_should_show = recipe.enabled_from_the_start or recipe_enabled
+            -- if not recipe_should_show and recipe.enabling_technologies ~= nil then
+            --     for _, technology_name in pairs(recipe.enabling_technologies) do
+            --         local force_technology = force_technologies[technology_name]
+            --         if force_technology and force_technology.enabled then
+            --             recipe_should_show = true
+            --             break
+            --         end
+            --     end
+            -- end
+            
+            table.insert(chainable_recipes, {proto = recipe, disabled = not recipe_enabled, hidden = recipe_hidden, ignored = user_ignored})
+        end
+    end
+    return chainable_recipes
+end
+
+-- Tries to add the given recipe to the current floor, then exiting the modal dialog
+function data_util.attempt_adding_line(player, recipe_id, production_type, subfactory_id, floor_id, insert_index)
+    -- I think production_type is fit to include in the Line.
+    local context = data_util.get("context", player)
+    local subfactory = Collection.get(context.factory.Subfactory, subfactory_id)
+    local recipe = Recipe.init_by_id(recipe_id, production_type)
+    local line = Line.init(recipe)
+    
+    -- If finding a machine fails, this line is invalid
+    if Line.change_machine(line, player, nil, nil) == false then -- not sure this can even happen because generator
+        title_bar.enqueue_message(player, {"fp.error_no_compatible_machine"}, "error", 1, false)
+    
+    else
+        local floor = Collection.get(subfactory.Floor, floor_id)
+        if insert_index == nil then
+            Floor.add(floor, line)
+        else
+            Floor.insert_at(floor, insert_index, line)
+        end
+        
+        local preferences = data_util.get("preferences", player)
+        local mb_defaults = preferences.mb_defaults
+        local message = nil
+        
+        if not (recipe.proto.custom or player.force.recipes[recipe.proto.name].enabled) then
+            message = {text = {"fp.warning_recipe_disabled"}, type = "warning"}
+        end
+        
+        -- Add default machine modules, if desired by the user
+        local machine_module = mb_defaults.machine
+        local secondary_module = mb_defaults.machine_secondary
+        
+        if machine_module and Machine.check_module_compatibility(line.machine, machine_module) then
+            local new_module = Module.init_by_proto(machine_module, line.machine.proto.module_limit)
+            Machine.add(line.machine, new_module)
+        
+        elseif secondary_module and Machine.check_module_compatibility(line.machine, secondary_module) then
+            local new_module = Module.init_by_proto(secondary_module, line.machine.proto.module_limit)
+            Machine.add(line.machine, new_module)
+        
+        -- Only show an error if any module default is actually set
+        elseif machine_module and message == nil then -- don't overwrite previous message, if it exists
+            message = {text = {"fp.warning_module_not_compatible", {"fp.pl_module", 1}}, type = "warning"}
+        end
+        
+        -- Add default beacon modules, if desired by the user
+        local beacon_module_proto, beacon_count = mb_defaults.beacon, mb_defaults.beacon_count
+        local beacon_proto = prototyper.defaults.get(player, "beacons")-- this will always exist
+        
+        if beacon_module_proto ~= nil and beacon_count ~= nil then
+            local blank_beacon = Beacon.init(beacon_proto, beacon_count, nil, line)
+            
+            if Beacon.check_module_compatibility(blank_beacon, beacon_module_proto) then
+                local module = Module.init_by_proto(beacon_module_proto, beacon_proto.module_limit)
+                Beacon.set_module(blank_beacon, module)
+                
+                Line.set_beacon(line, blank_beacon)
+            
+            elseif message == nil then -- don't overwrite previous message, if it exists
+                message = {text = {"fp.warning_module_not_compatible", {"fp.pl_beacon", 1}}, type = "warning"}
+            end
+        end
+        
+        calculation.update(player, subfactory)
+        main_dialog.refresh(player, "subfactory")
+        
+        if message ~= nil then title_bar.enqueue_message(player, message.text, message.type, 1, false) end
+    end
+end

@@ -1,5 +1,7 @@
 item_boxes = {}
 
+local window_util = require("ui.window_util")
+
 --- ** LOCAL UTIL **
 local function add_recipe(player, context, type, item_proto)
     if type == "byproduct" and context.subfactory.solver_type == "traditional" then
@@ -15,7 +17,7 @@ local function add_recipe(player, context, type, item_proto)
     end
 
     local production_type = (type == "byproduct") and "consume" or "produce"
-    modal_dialog.enter(player, {type="recipe", modal_data={product_proto=item_proto, production_type=production_type}})
+    window_util.request_to_add_recipe_chain(player, item_proto, production_type, context.subfactory.id, context.floor.id)
 end
 
 local function build_item_box(player, category, column_count)

@@ -47,6 +47,10 @@ require("ui.dialogs.modal_dialog")
 require("ui.ui_util")
 require("ui.event_handler")
 
+GUI_DEFINES = {
+    recipe_dialog = require("ui.dialogs.recipe_dialog"),
+}
+
 
 -- ** UTIL **
 -- No better place for this too simple, yet too specific function anywhere else

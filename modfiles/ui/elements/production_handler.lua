@@ -1,5 +1,7 @@
 production_handler = {}
 
+local window_util = require("ui.window_util")
+
 -- ** LOCAL UTIL **
 local function handle_toggle_click(player, tags, metadata)
     local context = data_util.get("context", player)
@@ -401,19 +403,19 @@ local function handle_item_click(player, tags, metadata)
                     main_dialog.refresh(player, "subfactory")
                 end
             elseif solver_type == "interior_point" then
-                modal_dialog.enter(player, {type="recipe", modal_data={product_proto=item.proto,
-                  production_type="consume", add_after_position=((metadata.shift) and line.gui_position or nil)}})
+                local insert_index = (metadata.shift) and (line.gui_position + 1) or nil
+                window_util.request_to_add_recipe_chain(player, item.proto, "consume", context.subfactory.id, context.floor.id, insert_index)
             end
         elseif tags.class == "Byproduct" then
             if solver_type == "traditional" then
                 title_bar.enqueue_message(player, {"fp.error_cant_add_byproduct_recipe"}, "error", 1, true)
             else
-                modal_dialog.enter(player, {type="recipe", modal_data={product_proto=item.proto,
-                  production_type="consume", add_after_position=((metadata.shift) and line.gui_position or nil)}})
+                local insert_index = (metadata.shift) and (line.gui_position + 1) or nil
+                window_util.request_to_add_recipe_chain(player, item.proto, "consume", context.subfactory.id, context.floor.id, insert_index)
             end
         elseif tags.class == "Ingredient" then
-            modal_dialog.enter(player, {type="recipe", modal_data={product_proto=item.proto,
-                production_type="produce", add_after_position=((metadata.shift) and line.gui_position or nil)}})
+            local insert_index = (metadata.shift) and (line.gui_position + 1) or nil
+            window_util.request_to_add_recipe_chain(player, item.proto, "produce", context.subfactory.id, context.floor.id, insert_index)
         else
             assert()
         end
@@ -509,8 +511,8 @@ local function handle_fuel_click(player, tags, metadata)
         return
 
     elseif metadata.click == "left" then
-        modal_dialog.enter(player, {type="recipe", modal_data={product_proto=fuel.proto, production_type="produce",
-          add_after_position=((metadata.shift) and line.gui_position or nil)}})
+        local insert_index = (metadata.shift) and (line.gui_position + 1) or nil
+        window_util.request_to_add_recipe_chain(player, fuel.proto, "produce", context.subfactory.id, context.floor.id, insert_index)
 
     elseif metadata.click == "right" then
         local applicable_prototypes = {}
