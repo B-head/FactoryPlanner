@@ -215,6 +215,7 @@ end
 
 function M.enter(player, window_defines, data)
     player = ui_util.get_player(player)
+    modal_dialog.init_modal_data(player)
     modal_dialog.create_interface_dimmer(player, "redesign", false)
     
     local window = gui.add(player.gui.screen, table.deep_copy(window_defines))
@@ -230,7 +231,7 @@ function M.enter(player, window_defines, data)
         tick = game.tick,
     }
     
-    player.opened = window
+    modal_dialog.register_dialog(player, window)
     if window.auto_center then
         window.force_auto_center()
     end

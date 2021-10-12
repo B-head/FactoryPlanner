@@ -17,7 +17,6 @@ local function create_base_modal_dialog(player, dialog_settings, modal_data)
       tags={mod="fp", on_gui_closed="close_modal_dialog"}}
     frame_modal_dialog.style.minimal_width = 240
     frame_modal_dialog.auto_center = true
-    modal_elements.modal_frame = frame_modal_dialog
 
     -- Title bar
     if dialog_settings.caption ~= nil then
@@ -165,15 +164,20 @@ function modal_dialog.enter(player, dialog_settings)
     -- Create modal dialog framework and let the dialog itself fill it out
     local frame_modal_dialog = create_base_modal_dialog(player, dialog_settings, ui_state.modal_data)
     dialog_object.open(player, ui_state.modal_data)
-    player.opened = frame_modal_dialog
+    modal_dialog.register_dialog(player, frame_modal_dialog)
 
     if dialog_settings.force_auto_center then frame_modal_dialog.force_auto_center() end
+end
+
+-- Used in window_util.lua.
+function modal_dialog.init_modal_data(player)
+    local ui_state = data_util.get("ui_state", player)
+    ui_state.modal_data = {}
 end
 
 function modal_dialog.create_interface_dimmer(player, modal_dialog_type, is_skip_dimmer)
     local ui_state = data_util.get("ui_state", player)
     ui_state.modal_dialog_type = modal_dialog_type
-    ui_state.modal_data = ui_state.modal_data or {}
 
     -- Create interface_dimmer first so the layering works out correctly
     local interface_dimmer = player.gui.screen.add{type="frame", style="fp_frame_semitransparent",
@@ -181,6 +185,12 @@ function modal_dialog.create_interface_dimmer(player, modal_dialog_type, is_skip
     interface_dimmer.style.size = ui_state.main_dialog_dimensions
     interface_dimmer.location = ui_state.main_elements.main_frame.location
     ui_state.modal_data.modal_elements = {interface_dimmer = interface_dimmer}
+end
+
+function modal_dialog.register_dialog(player, dialog_root)
+    local ui_state = data_util.get("ui_state", player)
+    player.opened = dialog_root
+    ui_state.modal_data.modal_elements.modal_frame = dialog_root
 end
 
 -- Handles the closing process of a modal dialog, reopening the main dialog thereafter
@@ -278,9 +288,7 @@ modal_dialog.gui_events = {
         {
             name = "re-layer_interface_dimmer",
             handler = (function(player, _, _)
-                if player.opened then
-                    player.opened.bring_to_front()
-                end
+                data_util.get("modal_elements", player).modal_frame.bring_to_front()
             end)
         },
         {
