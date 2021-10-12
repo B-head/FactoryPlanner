@@ -18,7 +18,7 @@ main_dialog = {}
 -- that's open at that stage is closed already when we get here. So we're at most at the modal dialog
 -- layer at this point and need to close the things below, if there are any.
 local function handle_other_gui_opening(player, event)
-    if event.element and event.element.get_mod() == script.mod_name then return end
+    if event.element then return end
 
     local ui_state = data_util.get("ui_state", player)
 

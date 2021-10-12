@@ -397,6 +397,10 @@ function ui_util.reverse_recursive_dispatch_gui_event(event)
     ui_util.dispatch_gui_event(event)
 end
 
+function ui_util.is_fp_gui(element)
+    return element.tags.mod == "fp" or element.tags[script.mod_name]
+end
+
 function ui_util.get_player(indicates_player)
     return (type(indicates_player) == "table") and indicates_player or game.get_player(indicates_player)
 end

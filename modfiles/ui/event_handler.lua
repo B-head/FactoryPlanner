@@ -225,7 +225,7 @@ local special_misc_handlers = {}
 special_misc_handlers.on_gui_opened = (function(_, event)
     -- This should only fire when a UI not associated with FP is opened, so FP's dialogs can close properly
     return (event.gui_type ~= defines.gui_type.custom or not event.element
-      or event.element.tags.mod ~= "fp")
+      or not ui_util.is_fp_gui(event.element))
 end)
 
 

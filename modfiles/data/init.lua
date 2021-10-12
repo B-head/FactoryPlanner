@@ -174,7 +174,7 @@ local function reset_player_gui(player)
 
     -- All mod frames
     for _, gui_element in pairs(player.gui.screen.children) do
-        if gui_element.valid and gui_element.get_mod() == script.mod_name then
+        if gui_element.valid and ui_util.is_fp_gui(gui_element) then
             gui_element.destroy()
         end
     end
