@@ -155,7 +155,7 @@ local function handle_gui_event(event)
     if not event.element then return end
 
     -- Rai says this is very slow, but it isn't really if called it once per event
-    if event.element.get_mod() ~= script.mod_name then return end
+    if event.element.tags.mod ~= "fp" then return end
 
     -- The event table actually contains its identifier, not its name
     local event_name = gui_identifier_map[event.name]
