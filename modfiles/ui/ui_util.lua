@@ -254,7 +254,7 @@ function ui_util.get_gui_element(context, find_name, ...)
             return ui_util.get_gui_element(e, ...)
         end
     end
-    assert(false, string.format("Can't find an element named %q.", find_name))
+    error(string.format("Can't find an element named %q.", find_name))
 end
 
 function ui_util.get_super_gui_element(context, find_name)
@@ -265,7 +265,7 @@ function ui_util.get_super_gui_element(context, find_name)
         end
         e = e.parent
     end
-    assert(false, string.format("Can't find an element named %q.", find_name))
+    error(string.format("Can't find an element named %q.", find_name))
 end
 
 -- function ui_util.create_gui_placeholder(key)
@@ -294,6 +294,7 @@ end
 ui_util.gui_handlers = {}
 
 function ui_util.register_handler(event_name, handler_id, handler)
+    assert(game == nil, "register_handler() needs to be called during initialization stage.")
     assert(handler_id, "To register, either handler_id or name is required.")
     assert(type(handler) == "function", string.format("%s handler for id %q is not function.", event_name, handler_id))
 
@@ -304,7 +305,7 @@ function ui_util.register_handler(event_name, handler_id, handler)
 end
 
 function ui_util.preprocess_gui_defines(handlers_id_prefix, defines)
-    assert(game == nil, "preprocess_defines() needs to be called during initialization stage.")
+    assert(game == nil, "preprocess_gui_defines() needs to be called during initialization stage.")
 
     if type(handlers_id_prefix) == "table" then
         defines = handlers_id_prefix
@@ -396,8 +397,8 @@ function ui_util.reverse_recursive_dispatch_gui_event(event)
     ui_util.dispatch_gui_event(event)
 end
 
-function ui_util.get_player(player_index)
-    return (type(player_index) == "number") and game.players[player_index] or player_index
+function ui_util.get_player(indicates_player)
+    return (type(indicates_player) == "table") and indicates_player or game.get_player(indicates_player)
 end
 
 return ui_util

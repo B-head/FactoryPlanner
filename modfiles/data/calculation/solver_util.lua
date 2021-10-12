@@ -317,7 +317,7 @@ end
 --         elseif v.type == "recipe_line" then
 --             coroutine.yield(v)
 --         else
---             assert(false)
+--             assert()
 --         end
 --     end
 --     local parent = floor.parent

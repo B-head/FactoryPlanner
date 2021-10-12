@@ -226,7 +226,7 @@ function calculation.update(player, subfactory)
         elseif subfactory.solver_type == "traditional" then
             sequential_solver.update_subfactory(subfactory_data)
         else
-            assert(false, "Undefined solver_type = " .. subfactory.solver_type)
+            error("Undefined solver_type = " .. subfactory.solver_type)
         end
 
         player_table.active_subfactory = nil  -- reset after calculations have been carried out

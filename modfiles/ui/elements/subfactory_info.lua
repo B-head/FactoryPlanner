@@ -68,7 +68,7 @@ local function handle_solver_change(player, _, metadata)
             title_bar.enqueue_message(player, {"fp.hint_byproducts_removed"}, "hint", 1, false)
         end
     else
-        assert(false, new_solver)
+        error("Undefined solver_type = "..new_solver)
     end
 
     calculation.update(player, subfactory)
