@@ -200,7 +200,7 @@ local recipe_group_box = ui_util.preprocess_gui_defines{
 
 local recipe_dialog = window_util.create_window_defines{
     type = "standard",
-    name = "recipe_dialog",
+    name = "fp_recipe_dialog",
     title = {"fp.two_word_title", {"fp.add"}, {"fp.pl_recipe", 1}},
     auto_center = true,
     allow_search = true,
