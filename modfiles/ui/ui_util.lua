@@ -39,12 +39,12 @@ function ui_util.toggle_mod_gui(player)
     local enable = data_util.get("settings", player).show_gui_button
 
     local frame_flow = mod_gui.get_button_flow(player)
-    local mod_gui_button = frame_flow["fp_button_toggle_interface"]
+    local mod_gui_button = frame_flow["fpbp_button_toggle_interface"]
 
     if enable then
         if not mod_gui_button then
-            frame_flow.add{type="button", name="fp_button_toggle_interface", caption={"fp.toggle_interface"},
-              tooltip={"fp.toggle_interface_tt"}, tags={mod="fp", on_gui_click="mod_gui_toggle_interface"},
+            frame_flow.add{type="button", name="fpbp_button_toggle_interface", caption={"fpbp.toggle_interface"},
+              tooltip={"fpbp.toggle_interface_tt"}, tags={on_gui_click="mod_gui_toggle_interface"},
               style=mod_gui.button_style, mouse_button_filter={"left"}}
         end
     else
@@ -187,7 +187,7 @@ function ui_util.switch.add_on_off(parent_flow, action, additional_tags, state, 
     local switch, label
 
     local function add_switch()
-        local tags = {mod="fp", on_gui_switch_state_changed=action}
+        local tags = {on_gui_switch_state_changed=action}
         for key, value in pairs(additional_tags) do tags[key] = value end
         switch = flow.add{type="switch", tags=tags, switch_state=state,
           left_label_caption={"fp.on"}, right_label_caption={"fp.off"}}
@@ -398,7 +398,7 @@ function ui_util.reverse_recursive_dispatch_gui_event(event)
 end
 
 function ui_util.is_fp_gui(element)
-    return element.tags.mod == "fp" or element.tags[script.mod_name]
+    return element.get_mod() == script.mod_name
 end
 
 function ui_util.get_player(indicates_player)

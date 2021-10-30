@@ -77,7 +77,7 @@ local builders = {}
 
 function builders.toggle(line, parent_flow, metadata)
     local relevant_line = (line.subfloor) and line.subfloor.defining_line or line
-    parent_flow.add{type="checkbox", tags={mod="fp", on_gui_click="toggle_line", line_id=line.id},
+    parent_flow.add{type="checkbox", tags={on_gui_click="toggle_line", line_id=line.id},
       state=relevant_line.active, tooltip=metadata.production_toggle_tutorial_tooltip,
       enabled=(not metadata.archive_open), mouse_button_filter={"left"}}
 end
@@ -88,7 +88,7 @@ function builders.done(line, parent_flow, _)
     local sprite = (relevant_line.done) and "utility/check_mark" or "fp_sprite_check_mark_green"
     local style = (relevant_line.done) and "flib_tool_button_light_green" or "flib_slot_default"
 
-    local button = parent_flow.add{type="sprite-button", tags={mod="fp", on_gui_click="checkmark_line", line_id=line.id},
+    local button = parent_flow.add{type="sprite-button", tags={on_gui_click="checkmark_line", line_id=line.id},
       sprite=sprite, style=style, mouse_button_filter={"left"}}
     button.style.size = 24
     button.style.padding = 0
@@ -115,7 +115,7 @@ function builders.recipe(line, parent_flow, metadata)
     end
 
     local tooltip = {"", recipe_proto.localised_name, indication, tutorial_tooltip}
-    parent_flow.add{type="sprite-button", tags={mod="fp", on_gui_click="act_on_line_recipe", line_id=line.id},
+    parent_flow.add{type="sprite-button", tags={on_gui_click="act_on_line_recipe", line_id=line.id},
       enabled=enabled, sprite=recipe_proto.sprite, tooltip=tooltip, style=style, mouse_button_filter={"left-and-right"}}
 end
 
@@ -124,7 +124,7 @@ function builders.percentage(line, parent_flow, metadata)
 
     local enabled = (not metadata.archive_open)
     local textfield_percentage = parent_flow.add{type="textfield", text=tostring(relevant_line.percentage),
-      tags={mod="fp", on_gui_text_changed="line_percentage", on_gui_confirmed="line_percentage", line_id=line.id},
+      tags={on_gui_text_changed="line_percentage", on_gui_confirmed="line_percentage", line_id=line.id},
       enabled=enabled}
     ui_util.setup_numeric_textfield(textfield_percentage, true, false)
     textfield_percentage.style.horizontal_align = "center"
@@ -177,7 +177,7 @@ function builders.machine(line, parent_flow, metadata)
         local tutorial_tooltip = metadata.machine_tutorial_tooltip
         local tooltip = {"", machine_proto.localised_name, number_line, indication, effects_tooltip, tutorial_tooltip}
 
-        parent_flow.add{type="sprite-button", tags={mod="fp", on_gui_click="act_on_line_machine", line_id=line.id},
+        parent_flow.add{type="sprite-button", tags={on_gui_click="act_on_line_machine", line_id=line.id},
           style=style, sprite=machine_proto.sprite, number=machine_count, tooltip=tooltip,
           mouse_button_filter={"left-and-right"}}
 
@@ -193,13 +193,13 @@ function builders.machine(line, parent_flow, metadata)
               metadata.module_tutorial_tooltip}
             -- The above variables don't need to be-initialized
 
-            parent_flow.add{type="sprite-button", tags={mod="fp", on_gui_click="act_on_line_module", line_id=line.id,
+            parent_flow.add{type="sprite-button", tags={on_gui_click="act_on_line_module", line_id=line.id,
               module_id=module.id}, sprite=module.proto.sprite, tooltip=tooltip, number=module.amount,
               style="flib_slot_button_default_small", mouse_button_filter={"left-and-right"}}
         end
 
         if Machine.empty_slot_count(line.machine) > 0 then
-            parent_flow.add{type="sprite-button", tags={mod="fp", on_gui_click="add_line_module", line_id=line.id},
+            parent_flow.add{type="sprite-button", tags={on_gui_click="add_line_module", line_id=line.id},
               sprite="utility/add", style="fp_sprite-button_inset_production", tooltip={"fp.add_module"},
               enabled=(not metadata.archive_open), mouse_button_filter={"left"}}
         end
@@ -214,7 +214,7 @@ function builders.beacon(line, parent_flow, metadata)
 
     local beacon = line.beacon
     if beacon == nil then
-        parent_flow.add{type="sprite-button", tags={mod="fp", on_gui_click="add_line_beacon", line_id=line.id},
+        parent_flow.add{type="sprite-button", tags={on_gui_click="add_line_beacon", line_id=line.id},
             sprite="utility/add", style="fp_sprite-button_inset_production", tooltip={"fp.add_beacon"},
             mouse_button_filter={"left"}, enabled=(not metadata.archive_open)}
     else
@@ -227,7 +227,7 @@ function builders.beacon(line, parent_flow, metadata)
           metadata.beacon_tutorial_tooltip}
 
         local button_beacon = parent_flow.add{type="sprite-button", sprite=beacon.proto.sprite, number=beacon.amount,
-          tags={mod="fp", on_gui_click="act_on_line_beacon", line_id=line.id}, style="flib_slot_button_default_small",
+          tags={on_gui_click="act_on_line_beacon", line_id=line.id}, style="flib_slot_button_default_small",
           tooltip=tooltip, mouse_button_filter={"left-and-right"}}
 
         if beacon.total_amount ~= nil then  -- add a graphical hint that a beacon total is set
@@ -294,7 +294,7 @@ function builders.products(line, parent_flow, metadata)
         local number_line = (number_tooltip) and {"fp.newline", number_tooltip} or ""
         local tooltip = {"", name_line, number_line, tutorial_tooltip}
 
-        parent_flow.add{type="sprite-button", tags={mod="fp", on_gui_click="act_on_line_item", line_id=line.id,
+        parent_flow.add{type="sprite-button", tags={on_gui_click="act_on_line_item", line_id=line.id,
           class="Product", item_id=product.id}, sprite=product.proto.sprite, style=style, number=amount,
           tooltip=tooltip, enabled=enabled, mouse_button_filter={"left-and-right"}}
 
@@ -315,7 +315,7 @@ function builders.byproducts(line, parent_flow, metadata)
         local tutorial_tooltip = enabled and metadata.byproduct_tutorial_tooltip or ""
         local tooltip = {"", byproduct.proto.localised_name, number_line, tutorial_tooltip}
 
-        parent_flow.add{type="sprite-button", tags={mod="fp", on_gui_click="act_on_line_item", line_id=line.id,
+        parent_flow.add{type="sprite-button", tags={on_gui_click="act_on_line_item", line_id=line.id,
           class="Byproduct", item_id=byproduct.id}, sprite=byproduct.proto.sprite, style="flib_slot_button_red_small",
           number=amount, tooltip=tooltip, mouse_button_filter={"left-and-right"}}
 
@@ -360,7 +360,7 @@ function builders.ingredients(line, parent_flow, metadata)
         local number_line = (number_tooltip) and {"fp.newline", number_tooltip} or ""
         local tooltip = {"", name_line, number_line, satisfaction_line, tutorial_tooltip}
 
-        parent_flow.add{type="sprite-button", tags={mod="fp", on_gui_click="act_on_line_item", line_id=line.id,
+        parent_flow.add{type="sprite-button", tags={on_gui_click="act_on_line_item", line_id=line.id,
           class="Ingredient", item_id=ingredient.id}, sprite=ingredient.proto.sprite, style=style, number=amount,
           tooltip=tooltip, enabled=enabled, mouse_button_filter={"left-and-right"}}
 
@@ -389,13 +389,13 @@ function builders.fuel(line, parent_flow, metadata)
     local number_line = (number_tooltip) and {"fp.newline", number_tooltip} or ""
     local tooltip = {"", name_line, number_line, satisfaction_line, metadata.fuel_tutorial_tooltip}
 
-    parent_flow.add{type="sprite-button", tags={mod="fp", on_gui_click="act_on_line_fuel", line_id=line.id},
+    parent_flow.add{type="sprite-button", tags={on_gui_click="act_on_line_fuel", line_id=line.id},
       sprite=fuel.proto.sprite, style="flib_slot_button_cyan_small", number=amount,
       tooltip=tooltip, mouse_button_filter={"left-and-right"}}
 end
 
 function builders.line_comment(line, parent_flow, _)
-    local textfield_comment = parent_flow.add{type="textfield", tags={mod="fp", on_gui_text_changed="line_comment",
+    local textfield_comment = parent_flow.add{type="textfield", tags={on_gui_text_changed="line_comment",
       line_id=line.id}, text=(line.comment or "")}
       textfield_comment.style.width = 160
     ui_util.setup_textfield(textfield_comment)

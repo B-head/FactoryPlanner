@@ -23,7 +23,7 @@ local function add_module_line(parent_flow, module, empty_slots, module_filter)
     local module_id = module and module.id
 
     local module_name = (module) and module.proto.name or nil
-    local button_module = flow_module.add{type="choose-elem-button", tags={mod="fp", on_gui_elem_changed="select_module", id=module_id},
+    local button_module = flow_module.add{type="choose-elem-button", tags={on_gui_elem_changed="select_module", id=module_id},
       elem_type="item", item=module_name, elem_filters=module_filter, style="fp_sprite-button_inset_tiny"}
     button_module.style.right_margin = 12
     controls.button = button_module
@@ -33,7 +33,7 @@ local function add_module_line(parent_flow, module, empty_slots, module_filter)
     local slider_value = (module) and module.amount or empty_slots
     local maximum_value = (module) and (module.amount + empty_slots) or empty_slots
     local minimum_value = maximum_value == 1 and 0 or 1 -- to make sure that the slider can be created
-    local slider = flow_module.add{type="slider", tags={mod="fp", on_gui_value_changed="module_amount", id=module_id},
+    local slider = flow_module.add{type="slider", tags={on_gui_value_changed="module_amount", id=module_id},
       minimum_value=minimum_value, maximum_value=maximum_value, value=slider_value, value_step=0.1, style="fp_slider_module"}
     -- this is the fix for the slider value step "not bug"
     -- you set it to something other than 1 after setting min/max, then set it to 1
@@ -42,7 +42,7 @@ local function add_module_line(parent_flow, module, empty_slots, module_filter)
     controls.slider = slider
 
     local textfield_slider = flow_module.add{type="textfield", text=tostring(slider_value),
-      tags={mod="fp", on_gui_text_changed="module_amount", id=module_id}}
+      tags={on_gui_text_changed="module_amount", id=module_id}}
     ui_util.setup_numeric_textfield(textfield_slider, false, false)
     textfield_slider.style.width = 40
     controls.input = textfield_slider
@@ -64,7 +64,7 @@ local function add_beacon_line(parent_flow, beacon)
     local controls = {parent = parent_flow}
 
     local beacon_filter = {{filter="type", type="beacon"}, {filter="flag", flag="hidden", invert=true, mode="and"}}
-    local button_beacon = flow_beacon.add{type="choose-elem-button", tags={mod="fp", on_gui_elem_changed="select_beacon"},
+    local button_beacon = flow_beacon.add{type="choose-elem-button", tags={on_gui_elem_changed="select_beacon"},
       elem_type="entity", entity=beacon.proto.name, elem_filters=beacon_filter, style="fp_sprite-button_inset_tiny"}
     button_beacon.style.right_margin = 12
     controls.button = button_beacon
@@ -73,7 +73,7 @@ local function add_beacon_line(parent_flow, beacon)
 
     local beacon_amount = (beacon.amount ~= 0) and tostring(beacon.amount) or ""
     local textfield_amount = flow_beacon.add{type="textfield", text=beacon_amount,
-      tags={mod="fp", on_gui_text_changed="beacon_amount"}}
+      tags={on_gui_text_changed="beacon_amount"}}
     ui_util.setup_numeric_textfield(textfield_amount, true, false)
     ui_util.select_all(textfield_amount)
     textfield_amount.style.width = 40
@@ -88,7 +88,7 @@ local function add_beacon_line(parent_flow, beacon)
     textfield_total.style.width = 40
     controls.input_total = textfield_total
 
-    local button_total = flow_beacon.add{type="sprite-button", tags={mod="fp", on_gui_click="use_beacon_selector"},
+    local button_total = flow_beacon.add{type="sprite-button", tags={on_gui_click="use_beacon_selector"},
       tooltip={"fp.beacon_selector_tt"}, sprite="fp_zone_selection", style="button", mouse_button_filter={"left"}}
     button_total.style.padding = 2
     button_total.style.size = 26

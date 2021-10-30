@@ -13,14 +13,14 @@ end
 data:extend({
     {
         type = "bool-setting",
-        name = "fp_display_gui_button",
+        name = "fpbp_display_gui_button",
         setting_type = "runtime-per-user",
         default_value = true,
         order = "a"
     },
     {
         type = "int-setting",
-        name = "fp_products_per_row",
+        name = "fpbp_products_per_row",
         setting_type = "runtime-per-user",
         default_value = 7,
         allowed_values = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14},
@@ -28,7 +28,7 @@ data:extend({
     },
     {
         type = "int-setting",
-        name = "fp_subfactory_list_rows",
+        name = "fpbp_subfactory_list_rows",
         setting_type = "runtime-per-user",
         default_value = 24,
         allowed_values = {12, 14, 16, 18, 20, 22, 24, 26, 28},
@@ -36,7 +36,7 @@ data:extend({
     },
     {
         type = "string-setting",
-        name = "fp_alt_action",
+        name = "fpbp_alt_action",
         setting_type = "runtime-per-user",
         default_value = "none",
         allowed_values = alt_action_values,
@@ -44,7 +44,7 @@ data:extend({
     },
     {
         type = "string-setting",
-        name = "fp_default_timescale",
+        name = "fpbp_default_timescale",
         setting_type = "runtime-per-user",
         default_value = "one_minute",
         allowed_values = {"one_second", "one_minute", "one_hour"},
@@ -52,7 +52,7 @@ data:extend({
     },
     {
         type = "string-setting",
-        name = "fp_view_belts_or_lanes",
+        name = "fpbp_view_belts_or_lanes",
         setting_type = "runtime-per-user",
         default_value = "belts",
         allowed_values = {"belts", "lanes"},
@@ -60,7 +60,7 @@ data:extend({
     },
     {
         type = "string-setting",
-        name = "fp_default_solver_type",
+        name = "fpbp_default_solver_type",
         setting_type = "runtime-per-user",
         default_value = "interior_point",
         allowed_values = {"traditional", "matrix", "interior_point"},

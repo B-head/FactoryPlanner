@@ -1,8 +1,8 @@
 data:extend({
     {
         type = "custom-input",
-        name = "fp_toggle_main_dialog",
-        key_sequence = "CONTROL + R",
+        name = "fpbp_toggle_main_dialog",
+        key_sequence = "CONTROL + SHIFT + R",
         consuming = "game-only",
         order = "a"
     },

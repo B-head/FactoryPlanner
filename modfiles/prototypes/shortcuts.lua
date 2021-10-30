@@ -1,11 +1,11 @@
 data:extend({
     {
         type = "shortcut",
-        name = "fp_open_interface",
+        name = "fpbp_open_interface",
         action = "lua",
         toggleable = false,
         order = "fp-a[open]",
-        associated_control_input = "fp_toggle_main_dialog",
+        associated_control_input = "fpbp_toggle_main_dialog",
         icon =
         {
             filename = "__factoryplanner__/graphics/shortcut_open_x32.png",

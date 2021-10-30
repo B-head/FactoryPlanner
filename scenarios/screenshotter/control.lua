@@ -9,14 +9,14 @@ script.on_event(defines.events.on_game_created_from_scenario, function()
     global.shot = 1
     global.pause = 10
 
-    global.setup = function() remote.call("factoryplanner", "execute_action", 1, "player_setup") end
+    global.setup = function() remote.call("factoryplanner_bheads_proposal", "execute_action", 1, "player_setup") end
     global.dimensions = {}
 
-    remote.call("factoryplanner", "initial_setup")  -- set up before the player is created
+    remote.call("factoryplanner_bheads_proposal", "initial_setup")  -- set up before the player is created
 end)
 
 
-remote.add_interface("screenshotter", {
+remote.add_interface("screenshotter_factoryplanner_bheads_proposal", {
     return_dimensions = function(scene, dimensions)
         global.dimensions[scene] = dimensions
     end
@@ -49,14 +49,14 @@ local scenes = {
 
 local shots = {
     function(scene)
-        remote.call("factoryplanner", "execute_action", 1, ("setup_" .. scene))
+        remote.call("factoryplanner_bheads_proposal", "execute_action", 1, ("setup_" .. scene))
         global.pause = 5
     end,
     function(scene)
         game.take_screenshot{path=(scene .. ".png"), show_gui=true, zoom=3}
     end,
     function(scene)
-        remote.call("factoryplanner", "execute_action", 1, ("teardown_" .. scene))
+        remote.call("factoryplanner_bheads_proposal", "execute_action", 1, ("teardown_" .. scene))
     end,
 }
 

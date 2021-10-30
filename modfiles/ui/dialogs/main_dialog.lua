@@ -67,14 +67,14 @@ function main_dialog.rebuild(player, default_visibility)
 
     -- Background dimmer (created first so the layering is correct, style set afterwards)
     local background_dimmer = player.gui.screen.add{type="frame",
-      tags={mod="fp", on_gui_click="re-layer_background_dimmer"}}
+      tags={on_gui_click="re-layer_background_dimmer"}}
     main_elements["background_dimmer"] = background_dimmer
 
 
     -- Create and configure the top-level frame
     local frame_main_dialog = player.gui.screen.add{type="frame", direction="vertical",
-      visible=interface_visible, tags={mod="fp", on_gui_closed="close_main_dialog"},
-      name="fp_frame_main_dialog"}
+      visible=interface_visible, tags={on_gui_closed="close_main_dialog"},
+      name="fpbp_frame_main_dialog"}
     main_elements["main_frame"] = frame_main_dialog
 
     local dimensions = main_dialog.determine_main_dialog_dimensions(player)
@@ -263,12 +263,12 @@ main_dialog.misc_events = {
     end),
 
     on_lua_shortcut = (function(player, event)
-        if event.prototype_name == "fp_open_interface" then
+        if event.prototype_name == "fpbp_open_interface" then
             main_dialog.toggle(player)
         end
     end),
 
-    fp_toggle_main_dialog = (function(player, _)
+    fpbp_toggle_main_dialog = (function(player, _)
         main_dialog.toggle(player)
     end)
 }

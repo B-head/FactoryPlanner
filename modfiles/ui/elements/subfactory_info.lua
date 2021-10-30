@@ -101,7 +101,7 @@ function subfactory_info.build(player)
     label_repair.style.single_line = false
     main_elements.subfactory_info["repair_label"] = label_repair
 
-    local button_repair = flow_repair.add{type="button", tags={mod="fp", on_gui_click="repair_subfactory"},
+    local button_repair = flow_repair.add{type="button", tags={on_gui_click="repair_subfactory"},
       caption={"fp.repair_subfactory"}, style="fp_button_rounded_mini", mouse_button_filter={"left"}}
     button_repair.style.top_margin = 4
 
@@ -143,7 +143,7 @@ function subfactory_info.build(player)
     flow_utility.style.vertical_align = "center"
     flow_utility.style.horizontal_spacing = 8
     flow_utility.add{type="label", caption={"fp.key_title", {"fp.utility"}}}
-    flow_utility.add{type="button", tags={mod="fp", on_gui_click="open_utility_dialog"}, caption={"fp.view_utilities"},
+    flow_utility.add{type="button", tags={on_gui_click="open_utility_dialog"}, caption={"fp.view_utilities"},
       style="fp_button_rounded_mini", mouse_button_filter={"left"}}
 
     local label_notes = table_utility.add{type="label", caption={"fp.info_label", {"fp.notes"}}}
@@ -163,7 +163,7 @@ function subfactory_info.build(player)
     main_elements.subfactory_info["timescales_table"] = table_timescales
 
     for scale, name in pairs(TIMESCALE_MAP) do
-        table_timescales.add{type="button", tags={mod="fp", on_gui_click="change_timescale", timescale=scale},
+        table_timescales.add{type="button", tags={on_gui_click="change_timescale", timescale=scale},
           style="fp_button_push", caption={"", "1", {"fp.unit_" .. name}}, mouse_button_filter={"left"}}
     end
 
@@ -179,13 +179,13 @@ function subfactory_info.build(player)
     main_elements.subfactory_info["prod_bonus_label"] = label_prod_bonus
 
     local button_override_prod_bonus = flow_mining_prod.add{type="button", caption={"fp.override"},
-      tags={mod="fp", on_gui_click="override_mining_prod"}, style="fp_button_rounded_mini",
+      tags={on_gui_click="override_mining_prod"}, style="fp_button_rounded_mini",
       mouse_button_filter={"left"}}
     button_override_prod_bonus.style.disabled_font_color = {}
     main_elements.subfactory_info["override_prod_bonus_button"] = button_override_prod_bonus
 
     local textfield_prod_bonus = flow_mining_prod.add{type="textfield",
-      tags={mod="fp", on_gui_text_changed="mining_prod_override", on_gui_confirmed="mining_prod_override"}}
+      tags={on_gui_text_changed="mining_prod_override", on_gui_confirmed="mining_prod_override"}}
     textfield_prod_bonus.style.size = {60, 26}
     ui_util.setup_numeric_textfield(textfield_prod_bonus, true, true)
     main_elements.subfactory_info["prod_bonus_override_textfield"] = textfield_prod_bonus
@@ -207,11 +207,11 @@ function subfactory_info.build(player)
         {"fp.solver_choice_matrix"},
         {"fp.solver_choice_interior_point"},
       },
-      tags={mod="fp", on_gui_selection_state_changed="solver_choice_changed"}}
+      tags={on_gui_selection_state_changed="solver_choice_changed"}}
     main_elements.subfactory_info["solver_choice_dropdown"] = dropdown_solver_choice
 
     local button_configure_solver = flow_solver_choice.add{type="sprite-button", sprite="utility/change_recipe",
-      tooltip={"fp.solver_choice_configure"}, tags={mod="fp", on_gui_click="configure_matrix_solver"},
+      tooltip={"fp.solver_choice_configure"}, tags={on_gui_click="configure_matrix_solver"},
       style="fp_sprite-button_rounded_mini", mouse_button_filter={"left"}}
     button_configure_solver.style.size = 26
     button_configure_solver.style.padding = 0

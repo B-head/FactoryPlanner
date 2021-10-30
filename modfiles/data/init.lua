@@ -29,13 +29,13 @@ local function reload_settings(player)
 
     local timescale_to_number = {one_second = 1, one_minute = 60, one_hour = 3600}
 
-    settings_table.show_gui_button = settings["fp_display_gui_button"].value
-    settings_table.products_per_row = tonumber(settings["fp_products_per_row"].value)
-    settings_table.subfactory_list_rows = tonumber(settings["fp_subfactory_list_rows"].value)
-    settings_table.alt_action = settings["fp_alt_action"].value
-    settings_table.default_timescale = timescale_to_number[settings["fp_default_timescale"].value]
-    settings_table.belts_or_lanes = settings["fp_view_belts_or_lanes"].value
-    settings_table.default_solver_type = settings["fp_default_solver_type"].value
+    settings_table.show_gui_button = settings["fpbp_display_gui_button"].value
+    settings_table.products_per_row = tonumber(settings["fpbp_products_per_row"].value)
+    settings_table.subfactory_list_rows = tonumber(settings["fpbp_subfactory_list_rows"].value)
+    settings_table.alt_action = settings["fpbp_alt_action"].value
+    settings_table.default_timescale = timescale_to_number[settings["fpbp_default_timescale"].value]
+    settings_table.belts_or_lanes = settings["fpbp_view_belts_or_lanes"].value
+    settings_table.default_solver_type = settings["fpbp_default_solver_type"].value
 
     global.players[player.index].settings = settings_table
 end
@@ -157,19 +157,19 @@ function NTH_TICK_HANDLERS.adjust_interface_dimensions(metadata)
     end
 
     local setting_prototypes = game.mod_setting_prototypes
-    local width_minimum = setting_prototypes["fp_products_per_row"].allowed_values[1]
-    local height_minimum = setting_prototypes["fp_subfactory_list_rows"].allowed_values[1]
+    local width_minimum = setting_prototypes["fpbp_products_per_row"].allowed_values[1]
+    local height_minimum = setting_prototypes["fpbp_subfactory_list_rows"].allowed_values[1]
 
     local live_settings = settings.get_player_settings(player)
-    live_settings["fp_products_per_row"] = {value = math.max(products_per_row, width_minimum)}
-    live_settings["fp_subfactory_list_rows"] = {value = math.max(subfactory_list_rows, height_minimum)}
+    live_settings["fpbp_products_per_row"] = {value = math.max(products_per_row, width_minimum)}
+    live_settings["fpbp_subfactory_list_rows"] = {value = math.max(subfactory_list_rows, height_minimum)}
 end
 
 local mod_gui = require("mod-gui")
 
 -- Destroys all GUIs so they are loaded anew the next time they are shown
 local function reset_player_gui(player)
-    local mod_gui_button = mod_gui.get_button_flow(player)["fp_button_toggle_interface"]
+    local mod_gui_button = mod_gui.get_button_flow(player)["fpbp_button_toggle_interface"]
     if mod_gui_button then mod_gui_button.destroy() end
 
     -- All mod frames
@@ -282,15 +282,15 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
         local player = game.get_player(event.player_index)
         reload_settings(player)
 
-        if event.setting == "fp_display_gui_button" then
+        if event.setting == "fpbp_display_gui_button" then
             ui_util.toggle_mod_gui(player)
 
-        elseif event.setting == "fp_products_per_row" or
-          event.setting == "fp_subfactory_list_rows" or
-          event.setting == "fp_alt_action" then
+        elseif event.setting == "fpbp_products_per_row" or
+          event.setting == "fpbp_subfactory_list_rows" or
+          event.setting == "fpbp_alt_action" then
             main_dialog.rebuild(player, false)
 
-        elseif event.setting == "fp_view_belts_or_lanes" then
+        elseif event.setting == "fpbp_view_belts_or_lanes" then
             data_util.update_all_product_definitions(player)
             main_dialog.rebuild(player, false)
 
@@ -301,4 +301,4 @@ end)
 
 -- ** COMMANDS **
 -- Allows running the config_changed function manually, to reset stuff (shouldn't be needed actually)
-commands.add_command("fp-reset-prototypes", {"command-help.fp_reset_prototypes"}, handle_configuration_change)
+commands.add_command("fpbp-reset-prototypes", {"command-help.fp_reset_prototypes"}, handle_configuration_change)

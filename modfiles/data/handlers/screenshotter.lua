@@ -45,9 +45,9 @@ local actions = {
         local player_table = data_util.get("table", player)
 
         -- Mod settings
-        settings.get_player_settings(player)["fp_display_gui_button"] = {value = false}
-        settings.get_player_settings(player)["fp_products_per_row"] = {value = 6}
-        settings.get_player_settings(player)["fp_subfactory_list_rows"] = {value = 16}
+        settings.get_player_settings(player)["fpbp_display_gui_button"] = {value = false}
+        settings.get_player_settings(player)["fpbp_products_per_row"] = {value = 6}
+        settings.get_player_settings(player)["fpbp_subfactory_list_rows"] = {value = 16}
 
         -- Preferences
         player_table.preferences.recipe_filters = {disabled = true, hidden = false}
@@ -180,7 +180,7 @@ local function execute_action(player_index, action_name)
     actions[action_name](player)
 end
 
-remote.add_interface("factoryplanner", {
+remote.add_interface("factoryplanner_bheads_proposal", {
     initial_setup = initial_setup,
     execute_action = execute_action
 })
