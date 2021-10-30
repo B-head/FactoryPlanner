@@ -3,8 +3,6 @@ ui_util = {
     switch = {}
 }
 
-local gui = require("__flib__.gui")
-
 -- ** GUI **
 -- Properly centers the given frame (need width/height parameters cause no API-read exists)
 function ui_util.properly_center_frame(player, frame, dimensions)
@@ -356,6 +354,8 @@ end
 --     impl(ret)
 --     return ret
 -- end
+
+local gui = require("__flib__.gui")
 
 function ui_util.dispatch_gui_event(event)
     local element = event.element or (ui_util.get_player(event.player_index) or {}).opened
