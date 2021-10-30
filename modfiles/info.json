@@ -1,12 +1,12 @@
 {
-    "name": "factoryplanner",
-    "version": "1.1.28",
-    "title": "Factory Planner",
-    "author": "Therenas",
+    "name": "factoryplanner_bheads_proposal",
+    "version": "1.1.0",
+    "title": "Factory Planner B_head's proposal",
+    "author": "Therenas, distributed by B_head",
     "factorio_version": "1.1",
     "dependencies": [
         "base >= 1.1.4",
-        "flib >= 0.6.0",
+        "flib >= 0.8.4",
         "? FNEI",
         "? what-is-it-really-used-for",
         "? RecipeBook"
