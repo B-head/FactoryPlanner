@@ -403,14 +403,14 @@ local function handle_item_click(player, tags, metadata)
                     main_dialog.refresh(player, "subfactory")
                 end
             elseif solver_type == "interior_point" then
-                local insert_index = (metadata.shift) and (line.gui_position + 1) or nil
+                local insert_index = (metadata.shift) and (line.gui_position) or 1
                 window_util.request_to_add_recipe_chain(player, item.proto, "consume", context.subfactory.id, context.floor.id, insert_index)
             end
         elseif tags.class == "Byproduct" then
             if solver_type == "traditional" then
                 title_bar.enqueue_message(player, {"fp.error_cant_add_byproduct_recipe"}, "error", 1, true)
             else
-                local insert_index = (metadata.shift) and (line.gui_position + 1) or nil
+                local insert_index = (metadata.shift) and (line.gui_position) or 1
                 window_util.request_to_add_recipe_chain(player, item.proto, "consume", context.subfactory.id, context.floor.id, insert_index)
             end
         elseif tags.class == "Ingredient" then
