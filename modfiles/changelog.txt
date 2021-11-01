@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.0
-Date: 31. 10. 2021
+Date: 01. 11. 2021
   Features:
     - Add interior point solver.
     - Support production loops.
@@ -14,3 +14,4 @@ Date: 31. 10. 2021
     - The default solver for new subfactories is now the interior point solver. (Solvers for existing subfactories will not be changed.)
     - Hide the percentage column when using matrix solver.
     - In recipe_line, the item button is displayed even if the amount is zero.
+    - Changed the place to add the consumption recipe to the above.
