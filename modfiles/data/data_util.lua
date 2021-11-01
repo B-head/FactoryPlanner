@@ -171,7 +171,7 @@ end
 function data_util.porter.get_export_string(subfactories)
     local export_table = {
         -- This can use the global mod_version since it's only called for migrated, valid subfactories
-        mod_version = global.mod_version,
+        mod_version = migrator.compatible_versions[global.mod_version],
         export_modset = global.installed_mods,
         subfactories = {}
     }

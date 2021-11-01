@@ -7,7 +7,7 @@ migrator = {}
 local last_migratable_version = "0.18.0"
 
 -- Returns a table containing all existing migrations in order
-local migration_masterlist = {
+local migration_masterlist_original = {
     [1] = {version="0.18.20", migration=require("data.migrations.migration_0_18_20")},
     [2] = {version="0.18.27", migration=require("data.migrations.migration_0_18_27")},
     [3] = {version="0.18.29", migration=require("data.migrations.migration_0_18_29")},
@@ -27,7 +27,14 @@ local migration_masterlist = {
     [17] = {version="1.1.25", migration=require("data.migrations.migration_1_1_25")},
     [18] = {version="1.1.26", migration=require("data.migrations.migration_1_1_26")},
     [19] = {version="1.1.27", migration=require("data.migrations.migration_1_1_27")},
-    [20] = {version="1.1.28", migration=require("data.migrations.migration_1_1_28")},
+}
+
+local migration_masterlist_bheads_proposal = {
+    {version="1.1.0", migration=require("data.migrations.migration_bp_1_1_0")},
+}
+
+migrator.compatible_versions = {
+    ["1.1.0"] = "1.1.28",
 }
 
 -- ** LOCAL UTIL **
@@ -65,8 +72,14 @@ end
 
 -- Determines whether a migration needs to take place, and if so, returns the appropriate range of the
 -- migration_masterlist. If the version changed, but no migrations apply, it returns an empty array.
-local function determine_migrations(previous_version)
+local function determine_migrations(previous_version, is_original)
     local migrations = {}
+    local migration_masterlist
+    if is_original then
+        migration_masterlist = migration_masterlist_original
+    else
+        migration_masterlist = migration_masterlist_bheads_proposal
+    end
 
     local found = false
     for _, migration in ipairs(migration_masterlist) do
@@ -81,7 +94,7 @@ end
 -- ** TOP LEVEL **
 -- Applies any appropriate migrations to the global table
 function migrator.migrate_global()
-    local migrations = determine_migrations(global.mod_version)
+    local migrations = determine_migrations(global.mod_version, false)
 
     apply_migrations(migrations, "global", nil, nil)
     global.mod_version = game.active_mods[script.mod_name]
@@ -91,7 +104,7 @@ end
 function migrator.migrate_player_table(player)
     local player_table = data_util.get("table", player)
     if player_table ~= nil then  -- don't apply migrations to new players
-        local migrations = determine_migrations(player_table.mod_version)
+        local migrations = determine_migrations(player_table.mod_version, false)
 
         -- General migrations
         apply_migrations(migrations, "player_table", player_table, player)
@@ -112,11 +125,17 @@ end
 function migrator.migrate_export_table(export_table)
     if not compare_versions(last_migratable_version, export_table.mod_version) then error() end
 
-    local migrations = determine_migrations(export_table.mod_version)
+    local migrations = determine_migrations(export_table.mod_version, true)
     for _, packed_subfactory in pairs(export_table.subfactories) do
         -- This migration type won't need the player argument, and removing it allows
         -- us to run imports without having a player attached
         apply_migrations(migrations, "packed_subfactory", packed_subfactory, nil)
+    end
+    local migrations_bp = determine_migrations("0.0.0", false)
+    for _, packed_subfactory in pairs(export_table.subfactories) do
+        -- This migration type won't need the player argument, and removing it allows
+        -- us to run imports without having a player attached
+        apply_migrations(migrations_bp, "packed_subfactory", packed_subfactory, nil)
     end
     export_table.mod_version = global.mod_version
 end
