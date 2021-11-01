@@ -37,7 +37,8 @@ local function create_filter_switch_defines(name, filter_name, caption)
                     tags.filters[filter_name] = boolean_state
                     gui.set_tags(window, tags)
 
-                    data_util.get("preferences", event.player_index).recipe_filters[filter_name] = boolean_state
+                    local player = ui_util.get_player(event.player_index)
+                    data_util.get("preferences", player).recipe_filters[filter_name] = boolean_state
                     apply_recipe_filter(event.player_index, element)
                 end,
             },
