@@ -136,12 +136,13 @@ end
 
 -- Combines items that occur more than once into one entry
 local function combine_identical_products(item_list)
-    local touched_items = {item = {}, fluid = {}, entity = {}}
+    local touched_items = {}
 
     for index=#item_list, 1, -1 do
         local item = item_list[index]
         if item.temperature == nil then  -- don't care to deal with temperature crap
-            local touched_item = touched_items[item.type][item.name]
+            local id = item.type.."@"..item.name
+            local touched_item = touched_items[id]
             if touched_item ~= nil then
                 touched_item.amount = touched_item.amount + item.amount
                 touched_item.proddable_amount = touched_item.proddable_amount + item.proddable_amount
@@ -149,7 +150,7 @@ local function combine_identical_products(item_list)
                 -- Using the table.remove function to preserve array-format
                 table.remove(item_list, index)
             else
-                touched_items[item.type][item.name] = item
+                touched_items[id] = item
             end
         end
     end
@@ -157,10 +158,11 @@ end
 
 -- Converts the given list to a list[type][name]-format
 local function create_type_indexed_list(item_list)
-    local indexed_list = {item = {}, fluid = {}, entity = {}}
+    local indexed_list = {}
 
     for index, item in pairs(item_list) do
-        indexed_list[item.type][item.name] = {index = index, item = table.shallow_copy(item)}
+        local id = item.type.."@"..item.name
+        indexed_list[id] = {index = index, item = table.shallow_copy(item)}
     end
 
     return indexed_list
@@ -169,8 +171,8 @@ end
 -- Determines the type_count for the given recipe prototype
 local function determine_item_type_counts(indexed_items)
     return {
-        items = table_size(indexed_items.item),
-        fluids = table_size(indexed_items.fluid)
+        items = table.reduce(indexed_items, function(acc, v) return v.item.type ~= "fluid" and acc + 1 or acc end, 0),
+        fluids = table.reduce(indexed_items, function(acc, v) return v.item.type == "fluid" and acc + 1 or acc end, 0)
     }
 end
 
@@ -220,23 +222,21 @@ function generator_util.format_recipe_products_and_ingredients(recipe_proto)
 
 
     -- Reduce item amounts for items that are both an ingredient and a product
-    for _, items_of_type in pairs(indexed_ingredients) do
-        for _, ingredient in pairs(items_of_type) do
-            local peer_product = indexed_products[ingredient.item.type][ingredient.item.name]
+    for id, ingredient in pairs(indexed_ingredients) do
+        local peer_product = indexed_products[id]
 
-            if peer_product then
-                local difference = ingredient.item.amount - peer_product.item.amount
+        if peer_product then
+            local difference = ingredient.item.amount - peer_product.item.amount
 
-                if difference < 0 then
-                    ingredients[ingredient.index].amount = nil
-                    products[peer_product.index].amount = -difference
-                elseif difference > 0 then
-                    ingredients[ingredient.index].amount = difference
-                    products[peer_product.index].amount = nil
-                else
-                    ingredients[ingredient.index].amount = nil
-                    products[peer_product.index].amount = nil
-                end
+            if difference < 0 then
+                ingredients[ingredient.index].amount = nil
+                products[peer_product.index].amount = -difference
+            elseif difference > 0 then
+                ingredients[ingredient.index].amount = difference
+                products[peer_product.index].amount = nil
+            else
+                ingredients[ingredient.index].amount = nil
+                products[peer_product.index].amount = nil
             end
         end
     end
@@ -434,7 +434,12 @@ function generator_util.add_recipe_tooltip(recipe)
         else
             for _, item in ipairs(recipe[item_type]) do
                 local name = generator_util.format_temperature_name(item, item.name)
-                local proto = game[item.type .. "_prototypes"][name]
+                local proto
+                if item.type == "fluid" then
+                    proto = game.fluid_prototypes[name]
+                else
+                    proto = game.item_prototypes[name]
+                end
                 local localised_name = generator_util.format_temperature_localised_name(item, proto)
                 current_table, next_index = data_util.build_localised_string({("\n    " .. "[" .. item.type .. "="
                   .. name .. "] " .. item.amount .. "x "), localised_name}, current_table, next_index)
