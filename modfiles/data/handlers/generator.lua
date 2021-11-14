@@ -217,6 +217,48 @@ function generator.all_recipes()
         end
     end
 
+    for _, proto in pairs(game.item_prototypes) do
+        do
+            local recipe = custom_recipe()
+            recipe.name = "external-product:"..proto.type.."@"..proto.name
+            recipe.localised_name = proto.localised_name
+            recipe.sprite = "item/" .. proto.name
+            recipe.order = proto.order
+            -- recipe.group = {name="external", order="z", valid=true, localised_name={"item-group-name.external"}}
+            recipe.subgroup = {name="external-product", order="a", valid=true}
+            recipe.category = "void"
+            recipe.energy = 1
+            recipe.ingredients = {}
+            recipe.products = {{type=proto.type, name=proto.name, amount=1}}
+            recipe.main_product = recipe.products[1]
+            recipe.is_external = true
+
+            generator_util.format_recipe_products_and_ingredients(recipe)
+            generator_util.add_recipe_tooltip(recipe)
+            generator_util.data_structure.insert(recipe)
+        end
+
+        do
+            local recipe = custom_recipe()
+            recipe.name = "external-ingredient:"..proto.type.."@"..proto.name
+            recipe.localised_name = proto.localised_name
+            recipe.sprite = "item/" .. proto.name
+            recipe.order = proto.order
+            -- recipe.group = {name="external", order="z", valid=true, localised_name={"item-group-name.external"}}
+            recipe.subgroup = {name="external-ingredient", order="b", valid=true}
+            recipe.category = "void"
+            recipe.energy = 1
+            recipe.ingredients = {{type=proto.type, name=proto.name, amount=1}}
+            recipe.products = {}
+            recipe.main_product = nil
+            recipe.is_external = true
+
+            generator_util.format_recipe_products_and_ingredients(recipe)
+            generator_util.add_recipe_tooltip(recipe)
+            generator_util.data_structure.insert(recipe)
+        end
+    end
+
     -- Add a general steam recipe that works with every boiler
     if game["fluid_prototypes"]["steam"] then  -- make sure the steam prototype exists
         local steam_recipe = custom_recipe()
@@ -460,6 +502,27 @@ function generator.all_machines()
                 end
             end
         end
+    end
+
+    do
+        local machine = {
+            name = "void",
+            category = "void",
+            localised_name = "void",
+            sprite = "utility/questionmark",
+            ingredient_limit = 1,
+            fluid_channels = {input = 1, output = 1},
+            speed = 1,
+            energy_type = "void",
+            energy_usage = 0,
+            energy_drain = 0,
+            emissions = 0,
+            base_productivity = 0,
+            allowed_effects = generator_util.format_allowed_effects(nil),
+            module_limit = 0,
+            launch_sequence_time = 1,
+        }
+        generator_util.data_structure.insert(machine)
     end
 
     local function sorting_function(a, b)
