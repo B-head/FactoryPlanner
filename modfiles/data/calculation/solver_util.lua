@@ -103,6 +103,8 @@ local function normalize_recipe_line(recipe_line, parent)
 
         maximum_machine_count = maximum_machine_count,
         minimum_machine_count = minimum_machine_count,
+
+        is_external = recipe_proto.is_external,
     }
 end
 
@@ -306,6 +308,21 @@ local function feedback_floor(machine_counts, player_index, timescale, normalize
     }
 end
 
+local function add_externals(product, ingredient, machine_counts, timescale, normalized_top_floor)
+    for k, v in M.iterate_recipe_lines(normalized_top_floor) do
+        local c = machine_counts[k]
+        if v.is_external then
+            for _, item in pairs(v.products) do
+                class_add(product, item, item.amount_per_machine_by_second * c * timescale)
+            end
+            for _, item in pairs(v.ingredients) do
+                class_add(ingredient, item, item.amount_per_machine_by_second * c * timescale)
+            end
+        end
+    end
+    return product, ingredient
+end
+
 --- Reflect the solution in the UI.
 -- @tparam {[string]=number,...} machine_counts Solution for amount of machines needed in a sub-factory.
 -- @tparam number player_index The value of `player_index` in `subfactory_data`.
@@ -313,14 +330,15 @@ end
 -- @param normalized_top_floor The value returned by @{normalize}.
 function M.feedback(machine_counts, player_index, timescale, normalized_top_floor)
     local res = feedback_floor(machine_counts, player_index, timescale, normalized_top_floor)
-    local ReferencesMet = structures.class.init() --- @todo Reflect on results.
+    local revisedProduct, revisedIngredient = add_externals(res.Product, res.Ingredient, machine_counts, timescale, normalized_top_floor)
+    local referencesMet = structures.class.init() --- @todo Reflect on results.
     calculation.interface.set_subfactory_result{
         player_index = player_index,
         energy_consumption = res.energy_consumption,
         pollution = res.pollution,
-        Product = ReferencesMet,
-        Byproduct = res.Product,
-        Ingredient = res.Ingredient
+        Product = referencesMet,
+        Byproduct = revisedProduct,
+        Ingredient = revisedIngredient,
     }
 end
 
