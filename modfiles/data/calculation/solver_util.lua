@@ -313,10 +313,10 @@ local function add_externals(product, ingredient, machine_counts, timescale, nor
         local c = machine_counts[k]
         if v.is_external then
             for _, item in pairs(v.products) do
-                class_add(product, item, item.amount_per_machine_by_second * c * timescale)
+                class_add(ingredient, item, item.amount_per_machine_by_second * c * timescale)
             end
             for _, item in pairs(v.ingredients) do
-                class_add(ingredient, item, item.amount_per_machine_by_second * c * timescale)
+                class_add(product, item, item.amount_per_machine_by_second * c * timescale)
             end
         end
     end
