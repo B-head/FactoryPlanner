@@ -75,5 +75,12 @@ data:extend({
         filename = "__factoryplanner__/graphics/check_mark_green.png",
         size = 32, icon_mipmaps = 2,
         flags = {"gui-icon"}
-    }
+    },
+    {
+        type = "sprite",
+        name = "fp_sprite_external_group",
+        filename = "__core__/graphics/factorio-icon@2x.png",
+        size = 128, icon_mipmaps = 2,
+        flags = {"gui-icon"}
+    },
 })
