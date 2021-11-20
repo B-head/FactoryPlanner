@@ -140,7 +140,7 @@ function builders.machine(line, parent_flow, metadata)
         local tooltip = {"fp.subfloor_machine_count", machine_count, {"fp.pl_machine", machine_count}}
         parent_flow.add{type="sprite-button", sprite="fp_generic_assembler", style="flib_slot_button_default_small",
           enabled=false, number=machine_count, tooltip=tooltip}
-    else
+    elseif not line.recipe.proto.is_external then
         -- Machine
         machine_count = ui_util.format_number(machine_count, 4)
         local tooltip_count = machine_count
@@ -255,6 +255,7 @@ function builders.beacon(line, parent_flow, metadata)
 end
 
 function builders.power(line, parent_flow, metadata)
+    if line.recipe.proto.is_external then return end
     local pollution_line = (metadata.pollution_column) and ""
       or {"fp.newline", {"fp.name_value", {"fp.u_pollution"}, ui_util.format_SI_value(line.pollution, "P/m", 5)}}
     parent_flow.add{type="label", caption=ui_util.format_SI_value(line.energy_consumption, "W", 3),
@@ -262,6 +263,7 @@ function builders.power(line, parent_flow, metadata)
 end
 
 function builders.pollution(line, parent_flow, _)
+    if line.recipe.proto.is_external then return end
     parent_flow.add{type="label", caption=ui_util.format_SI_value(line.pollution, "P/m", 3),
       tooltip=ui_util.format_SI_value(line.pollution, "P/m", 5)}
 end
