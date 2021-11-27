@@ -222,7 +222,7 @@ function generator.all_recipes()
             local recipe = custom_recipe()
             recipe.name = "external-product:"..proto.type.."@"..proto.name
             recipe.localised_name = proto.localised_name
-            recipe.sprite = "item/" .. proto.name
+            recipe.sprite = "fp_sprite_external_product"
             recipe.order = proto.order
             recipe.group = {name="external", order="z", valid=true, localised_name={"fp.external_group"}, sprite="fp_sprite_external_group"}
             recipe.subgroup = {name="external-product", order="a", valid=true}
@@ -242,7 +242,7 @@ function generator.all_recipes()
             local recipe = custom_recipe()
             recipe.name = "external-ingredient:"..proto.type.."@"..proto.name
             recipe.localised_name = proto.localised_name
-            recipe.sprite = "item/" .. proto.name
+            recipe.sprite = "fp_sprite_external_ingredient"
             recipe.order = proto.order
             recipe.group = {name="external", order="z", valid=true, localised_name={"fp.external_group"}, sprite="fp_sprite_external_group"}
             recipe.subgroup = {name="external-ingredient", order="b", valid=true}

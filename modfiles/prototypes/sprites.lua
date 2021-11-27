@@ -83,4 +83,18 @@ data:extend({
         size = 128, icon_mipmaps = 2,
         flags = {"gui-icon"}
     },
+    {
+        type = "sprite",
+        name = "fp_sprite_external_product",
+        filename = "__factoryplanner__/graphics/external_product.png",
+        size = 64, icon_mipmaps = 2,
+        flags = {"gui-icon"}
+    },
+    {
+        type = "sprite",
+        name = "fp_sprite_external_ingredient",
+        filename = "__factoryplanner__/graphics/external_ingredient.png",
+        size = 64, icon_mipmaps = 2,
+        flags = {"gui-icon"}
+    },
 })

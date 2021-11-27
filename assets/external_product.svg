@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128"
+   height="128"
+   viewBox="0 0 33.866666 33.866668"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="external_product.svg"
+   inkscape:export-filename="C:\Users\B_head\Documents\VS_Code\FactoryPlanner\modfiles\graphics\external_product.png"
+   inkscape:export-xdpi="48"
+   inkscape:export-ydpi="48"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:document-units="px"
+     showgrid="true"
+     showguides="true"
+     inkscape:snap-midpoints="true"
+     inkscape:snap-grids="true"
+     units="px"
+     width="128px"
+     inkscape:guide-bbox="true"
+     inkscape:zoom="4.33"
+     inkscape:cx="81.986143"
+     inkscape:cy="62.702079"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid295"
+       spacingx="0.26458334"
+       spacingy="0.26458334"
+       empspacing="4" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient5077"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop5075" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient5069"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop5067" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3057"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3055" />
+    </linearGradient>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g714"
+       transform="matrix(2.0481455,0,0,2.3129939,52.081038,-119.19484)"
+       style="fill:#cdf4c3;fill-opacity:1;stroke:#cdf4c3;stroke-width:0.24312232;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="C:\Users\B_head\Pictures\external-product.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <g
+         id="g1079"
+         transform="translate(0.06141323,-0.09438919)"
+         style="fill:#cdf4c3;fill-opacity:1;stroke:#cdf4c3;stroke-width:0.24312232;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
+        <path
+           id="rect191-1-5"
+           style="stroke:#cdf4c3;stroke-width:0.24312232;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill:#cdf4c3;fill-opacity:1"
+           d="m -23.939618,62.608536 v 2.2878 H -10.5047 v -2.2878 h -1.550183 l 0,0.91512 -10.334552,0 0,-0.91512 z"
+           sodipodi:nodetypes="ccccccccc" />
+      </g>
+    </g>
+    <g
+       id="g718"
+       transform="matrix(0.52397644,0,0,0.55261875,16.993059,-29.136502)"
+       style="fill:#cdf4c3;stroke:#cdf4c3;stroke-width:0.98338549;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1">
+      <path
+         id="rect445"
+         style="stroke:#cdf4c3;stroke-width:0.98338549;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill:#cdf4c3;fill-opacity:1"
+         d="m -10.213039,58.46979 0,19.151238 H -20.312094 L -0.11398459,96.772267 20.084125,77.621028 H 9.9850702 l 0,-19.151238 z"
+         sodipodi:nodetypes="cccccccc" />
+    </g>
+  </g>
+</svg>
