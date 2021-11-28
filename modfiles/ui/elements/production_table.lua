@@ -108,7 +108,7 @@ function builders.recipe(line, parent_flow, metadata)
     elseif line.subfloor then
         style = "flib_slot_button_blue_small"
         indication = {"fp.newline", {"fp.notice", {"fp.recipe_subfloor_attached"}}}
-    elseif line.recipe.production_type == "consume" then
+    elseif relevant_line.recipe.production_type == "consume" then
         style = "flib_slot_button_red_small"
         indication = {"fp.newline", {"fp.notice", {"fp.recipe_consumes_byproduct"}}}
         tutorial_tooltip = metadata.consuming_recipe_tutorial_tooltip
@@ -132,6 +132,7 @@ function builders.percentage(line, parent_flow, metadata)
 end
 
 function builders.machine(line, parent_flow, metadata)
+    local relevant_line = (line.subfloor) and line.subfloor.defining_line or line
     local machine_count = line.machine.count
     parent_flow.style.horizontal_spacing = 2
 
@@ -140,7 +141,7 @@ function builders.machine(line, parent_flow, metadata)
         local tooltip = {"fp.subfloor_machine_count", machine_count, {"fp.pl_machine", machine_count}}
         parent_flow.add{type="sprite-button", sprite="fp_generic_assembler", style="flib_slot_button_default_small",
           enabled=false, number=machine_count, tooltip=tooltip}
-    elseif not line.recipe.proto.is_external then
+    elseif not relevant_line.recipe.proto.is_external then
         -- Machine
         machine_count = ui_util.format_number(machine_count, 4)
         local tooltip_count = machine_count
@@ -255,7 +256,8 @@ function builders.beacon(line, parent_flow, metadata)
 end
 
 function builders.power(line, parent_flow, metadata)
-    if line.recipe.proto.is_external then return end
+    local relevant_line = (line.subfloor) and line.subfloor.defining_line or line
+    if relevant_line.recipe.proto.is_external then return end
     local pollution_line = (metadata.pollution_column) and ""
       or {"fp.newline", {"fp.name_value", {"fp.u_pollution"}, ui_util.format_SI_value(line.pollution, "P/m", 5)}}
     parent_flow.add{type="label", caption=ui_util.format_SI_value(line.energy_consumption, "W", 3),
@@ -263,7 +265,8 @@ function builders.power(line, parent_flow, metadata)
 end
 
 function builders.pollution(line, parent_flow, _)
-    if line.recipe.proto.is_external then return end
+    local relevant_line = (line.subfloor) and line.subfloor.defining_line or line
+    if relevant_line.recipe.proto.is_external then return end
     parent_flow.add{type="label", caption=ui_util.format_SI_value(line.pollution, "P/m", 3),
       tooltip=ui_util.format_SI_value(line.pollution, "P/m", 5)}
 end
