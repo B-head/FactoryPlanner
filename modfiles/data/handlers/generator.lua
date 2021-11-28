@@ -217,42 +217,67 @@ function generator.all_recipes()
         end
     end
 
+    local function external_product(proto, item_type)
+        local recipe = custom_recipe()
+        recipe.name = "external-product:"..item_type.."@"..proto.name
+        recipe.localised_name = proto.localised_name
+        recipe.sprite = "fp_sprite_external_product"
+        recipe.order = proto.order
+        recipe.group = {name="external", order="z", valid=true, localised_name={"fp.external_group"}, sprite="fp_sprite_external_group"}
+        recipe.subgroup = {name="external-product", order="a", valid=true}
+        recipe.category = "void"
+        recipe.energy = 1
+        recipe.ingredients = {}
+        recipe.products = {{type=item_type, name=proto.name, amount=1}}
+        recipe.main_product = recipe.products[1]
+        recipe.is_external = true
+        return recipe
+    end
+
+    local function external_ingredient(proto, item_type)
+        local recipe = custom_recipe()
+        recipe.name = "external-ingredient:"..item_type.."@"..proto.name
+        recipe.localised_name = proto.localised_name
+        recipe.sprite = "fp_sprite_external_ingredient"
+        recipe.order = proto.order
+        recipe.group = {name="external", order="z", valid=true, localised_name={"fp.external_group"}, sprite="fp_sprite_external_group"}
+        recipe.subgroup = {name="external-ingredient", order="b", valid=true}
+        recipe.category = "void"
+        recipe.energy = 1
+        recipe.ingredients = {{type=item_type, name=proto.name, amount=1}}
+        recipe.products = {}
+        recipe.main_product = nil
+        recipe.is_external = true
+        return recipe
+    end
+
+    -- Add external recipes
     for _, proto in pairs(game.item_prototypes) do
         do
-            local recipe = custom_recipe()
-            recipe.name = "external-product:"..proto.type.."@"..proto.name
-            recipe.localised_name = proto.localised_name
-            recipe.sprite = "fp_sprite_external_product"
-            recipe.order = proto.order
-            recipe.group = {name="external", order="z", valid=true, localised_name={"fp.external_group"}, sprite="fp_sprite_external_group"}
-            recipe.subgroup = {name="external-product", order="a", valid=true}
-            recipe.category = "void"
-            recipe.energy = 1
-            recipe.ingredients = {}
-            recipe.products = {{type=proto.type, name=proto.name, amount=1}}
-            recipe.main_product = recipe.products[1]
-            recipe.is_external = true
-
+            local recipe = external_product(proto, proto.type)
             generator_util.format_recipe_products_and_ingredients(recipe)
             generator_util.add_recipe_tooltip(recipe)
             generator_util.data_structure.insert(recipe)
         end
 
         do
-            local recipe = custom_recipe()
-            recipe.name = "external-ingredient:"..proto.type.."@"..proto.name
-            recipe.localised_name = proto.localised_name
-            recipe.sprite = "fp_sprite_external_ingredient"
-            recipe.order = proto.order
-            recipe.group = {name="external", order="z", valid=true, localised_name={"fp.external_group"}, sprite="fp_sprite_external_group"}
-            recipe.subgroup = {name="external-ingredient", order="b", valid=true}
-            recipe.category = "void"
-            recipe.energy = 1
-            recipe.ingredients = {{type=proto.type, name=proto.name, amount=1}}
-            recipe.products = {}
-            recipe.main_product = nil
-            recipe.is_external = true
+            local recipe = external_ingredient(proto, proto.type)
+            generator_util.format_recipe_products_and_ingredients(recipe)
+            generator_util.add_recipe_tooltip(recipe)
+            generator_util.data_structure.insert(recipe)
+        end
+    end
 
+    for _, proto in pairs(game.fluid_prototypes) do
+        do
+            local recipe = external_product(proto, "fluid")
+            generator_util.format_recipe_products_and_ingredients(recipe)
+            generator_util.add_recipe_tooltip(recipe)
+            generator_util.data_structure.insert(recipe)
+        end
+
+        do
+            local recipe = external_ingredient(proto, "fluid")
             generator_util.format_recipe_products_and_ingredients(recipe)
             generator_util.add_recipe_tooltip(recipe)
             generator_util.data_structure.insert(recipe)
